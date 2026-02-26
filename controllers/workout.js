@@ -3,36 +3,33 @@ const Workout = require('../models/Workout');
 const { errorHandler } = require('../auth');
 
 module.exports.addWorkout = (req, res) => {
-
     let newWorkout = new Workout({
         userId: req.user.id,
         name: req.body.name,
         duration: req.body.duration
     });
 
-    Workout.findOne({ name: req.body.name })
+    Workout.findOne({ name: req.body.name, userId: req.user.id })
     .then(existingWorkout => {
-        if(existingWorkout){
+        if (existingWorkout) {
             return res.status(409).send({ message: 'Workout already exists' });
         } else {
             return newWorkout.save()
-            .then(result => res.status(201).send({
-                result: result
-            }))
-            .catch(error => errorHandler(error,req,res));
+                .then(result => res.status(201).send({ result }))
+                .catch(error => errorHandler(error, req, res));
         }
     })
     .catch(error => errorHandler(error, req, res));
-}
+};
+
 
 module.exports.getMyWorkouts = (req, res) => {
-    return Workout.find({})
+    return Workout.find({ userId: req.user.id })
     .then(result => {
-        if(result.length > 0){
-            return res.status(200).send({workouts: result});
-        }
-        else{
-            return res.status(404).send({ message: 'No workouts found'});
+        if (result.length > 0) {
+            return res.status(200).send({ workouts: result });
+        } else {
+            return res.status(404).send({ message: 'No workouts found' });
         }
     })
     .catch(error => errorHandler(error, req, res));
