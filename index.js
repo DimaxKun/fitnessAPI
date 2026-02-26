@@ -6,6 +6,7 @@ const workoutRoutes = require('./routes/workout')
 
 const app = express();
 
+app.use(cors());
 
 mongoose.connect('mongodb+srv://admin:admin1234@alicluster.rzokgxg.mongodb.net/b598-s83?appName=AliCluster')
 
